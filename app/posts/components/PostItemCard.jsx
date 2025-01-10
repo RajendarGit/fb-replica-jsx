@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { Card, CardContent, CardMedia, Typography, Button, TextField, IconButton, Box } from '@mui/material';
 import { ThumbUp, Comment, Send } from '@mui/icons-material';
+import Image from 'next/image';
 
 const PostItemCard = ({ id, name, time, mediaUrl, mediaType, title, description }) => {
   const [showCommentBox, setShowCommentBox] = useState(false);
@@ -19,9 +20,10 @@ const PostItemCard = ({ id, name, time, mediaUrl, mediaType, title, description 
   };
 
   return (
-    <Card sx={{ margin: '20px', maxWidth: 500 }}>
+    <Card>
       {mediaType === 'image' ? (
-        <CardMedia component="img" height="200" image={mediaUrl} alt={title} />
+        <Image style={{ objectFit: 'cover', width: '100%', height: '300'}} src={mediaUrl} alt={title} width={200} height={200} />
+        // <CardMedia component="img" height="200" image={mediaUrl} alt={title} />
       ) : (
         <CardMedia component="video" height="200" controls src={mediaUrl} />
       )}
@@ -57,6 +59,7 @@ const PostItemCard = ({ id, name, time, mediaUrl, mediaType, title, description 
               value={comment}
               onChange={(e) => setComment(e.target.value)}
               fullWidth
+              multiline
             />
             <IconButton color="primary" onClick={handleComment}>
               <Send />
