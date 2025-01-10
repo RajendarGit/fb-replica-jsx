@@ -1,4 +1,5 @@
 import { Roboto } from 'next/font/google';
+import Providers from './components/Providers';
 
 const roboto = Roboto({
   subsets: ['latin'], // Include the required subsets
@@ -13,10 +14,12 @@ export const metadata = {
 
 export default function RootLayout({ children }) {
   return (
+    <Providers>
     <html lang="en">
       <body className={roboto.className}>
         {children}
       </body>
     </html>
+    </Providers>
   );
 }
