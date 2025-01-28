@@ -10,8 +10,16 @@ const initialState = {
 export const fetchPosts = createAsyncThunk('posts/fetchPosts', async () => {
   try {
     // Fetch posts
-    const postsResponse = await axios.get(process.env.NEXT_PUBLIC_POSTS_API);
+    const postsResponse = await axios.get(`${process.env.NEXT_PUBLIC_POSTS_API}/posts`);
     const posts = postsResponse.data.slice(0, 10);
+
+    // Fetch user data
+    const usersResponse = await axios.get(`${process.env.NEXT_PUBLIC_POSTS_API}/users`);
+    const users = usersResponse.data;
+
+    // Fetch user avatar data
+    // const userAvatarResponse = await axios.get(`${process.env.NEXT_PUBLIC_AVATAR_API}/avatar.php?g=female`);
+    // const userAvatar = userAvatarResponse.data;
 
     // Fetch random images from Unsplash
     const imageRequests = posts.map(() =>
@@ -28,16 +36,22 @@ export const fetchPosts = createAsyncThunk('posts/fetchPosts', async () => {
     });
     const videos = videoResponse.data.videos.map((video) => video.video_files[0].link);
 
-    // Mix posts with images and videos
-    const combinedPosts = posts.map((post, index) => ({
-      ...post,
-      mediaUrl: index % 2 === 0 ? images[index % images.length] : videos[index % videos.length],
-      mediaType: index % 2 === 0 ? 'image' : 'video',
-    }));
+    // Mix posts with user data, images, and videos
+    const combinedPosts = posts.map((post, index) => {
+      const user = users.find((user) => user.id === post.userId) || {};
+      // const usersAvatar = userAvatar.find((avatar) => avatar.id === post.userId) || {};
+      return {
+        ...post,
+        userName: user.name || 'Unknown User',
+        avatarUrl:'https://xsgames.co/randomusers/avatar.php?g=pixel',
+        mediaUrl: index % 2 === 0 ? images[index % images.length] : videos[index % videos.length],
+        mediaType: index % 2 === 0 ? 'image' : 'video',
+      };
+    });
 
     return combinedPosts;
   } catch (error) {
-    throw new Error('Failed to fetch posts, images, or videos');
+    throw new Error('Failed to fetch posts, users, images, or videos');
   }
 });
 
@@ -62,4 +76,5 @@ const postSlice = createSlice({
 });
 
 export const selectPosts = (state) => state.posts.posts;
+export const selectStatus = (state) => state.posts.status;
 export default postSlice.reducer;

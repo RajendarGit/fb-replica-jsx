@@ -1,9 +1,9 @@
 import React, { useState } from 'react';
-import { Card, CardContent, CardMedia, Typography, Button, TextField, IconButton, Box } from '@mui/material';
+import { Card, CardContent, CardMedia, Typography, Button, TextField, IconButton, Box, Avatar } from '@mui/material';
 import { ThumbUp, Comment, Send } from '@mui/icons-material';
 import Image from 'next/image';
 
-const PostItemCard = ({ id, name, time, mediaUrl, mediaType, title, description }) => {
+const PostItemCard = ({ id, userName, name, avatarUrl, time, mediaUrl, mediaType, title, description }) => {
   const [showCommentBox, setShowCommentBox] = useState(false);
   const [comment, setComment] = useState('');
   const [reaction, setReaction] = useState(null);
@@ -20,24 +20,45 @@ const PostItemCard = ({ id, name, time, mediaUrl, mediaType, title, description 
   };
 
   return (
-    <Card>
+    <Card sx={{ marginBottom: '20px' }}>
+      {/* User Avatar and Name */}
+      <Box sx={{ display: 'flex', alignItems: 'center', gap: 2, padding: '16px' }}>
+        <Avatar src={avatarUrl} alt={name} />
+        <Box>
+          <Typography variant="h6">{userName}</Typography>
+          <Typography variant="body2" color="textSecondary">
+            {time}
+          </Typography>
+        </Box>
+      </Box>
+
+      {/* Media Content */}
       {mediaType === 'image' ? (
-        <Image style={{ objectFit: 'cover', width: '100%', height: '300'}} src={mediaUrl} alt={title} width={200} height={200} />
-        // <CardMedia component="img" height="200" image={mediaUrl} alt={title} />
+        <Box sx={{ maxHeight: '400px', overflow: 'hidden' }}>
+          <Image
+            layout="responsive"
+            objectFit="cover"
+            quality={100}
+            src={mediaUrl}
+            alt={title}
+            width={200}
+            height={300}
+          />
+        </Box>
       ) : (
-        <CardMedia component="video" height="200" controls src={mediaUrl} />
+        <CardMedia component="video" height="400" controls src={mediaUrl} />
       )}
+
+      {/* Post Content */}
       <CardContent>
-        <Typography variant="h6">{name}</Typography>
-        <Typography variant="body2" color="textSecondary">
-          {time}
-        </Typography>
         <Typography variant="h5" sx={{ marginTop: '10px' }}>
           {title}
         </Typography>
         <Typography variant="body1" sx={{ marginTop: '10px' }}>
           {description}
         </Typography>
+
+        {/* Reaction and Comment Buttons */}
         <Box sx={{ marginTop: '20px', display: 'flex', gap: '10px' }}>
           <IconButton onClick={() => handleReaction('like')}>
             <ThumbUp color={reaction === 'like' ? 'primary' : 'inherit'} />
@@ -50,6 +71,8 @@ const PostItemCard = ({ id, name, time, mediaUrl, mediaType, title, description 
             Comment
           </Button>
         </Box>
+
+        {/* Comment Box */}
         {showCommentBox && (
           <Box sx={{ marginTop: '10px', display: 'flex', gap: '10px' }}>
             <TextField

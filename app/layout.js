@@ -1,10 +1,13 @@
-import { Roboto } from 'next/font/google';
-import Providers from './components/Providers';
+import { Roboto } from "next/font/google";
+import Providers from "./components/Providers";
+import { ThemeContextProvider } from "./components/ThemeContextProvider";
+import TopBar from "./components/TopBar";
+import { Box } from "@mui/material";
 
 const roboto = Roboto({
-  subsets: ['latin'], // Include the required subsets
-  weight: ['400', '700'], // Specify font weights
-  style: ['normal', 'italic'], // Specify styles
+  subsets: ["latin"], // Include the required subsets
+  weight: ["400", "700"], // Specify font weights
+  style: ["normal", "italic"], // Specify styles
 });
 
 export const metadata = {
@@ -15,11 +18,14 @@ export const metadata = {
 export default function RootLayout({ children }) {
   return (
     <Providers>
-    <html lang="en">
-      <body className={roboto.className}>
-        {children}
-      </body>
-    </html>
+      <ThemeContextProvider>
+        <html lang="en">
+          <body className={roboto.className}>
+            <TopBar />
+            <Box sx={{pt: 10}}>{children}</Box>
+          </body>
+        </html>
+      </ThemeContextProvider>
     </Providers>
   );
 }
